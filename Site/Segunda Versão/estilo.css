@@ -1,0 +1,8 @@
+.img-log {
+	height: 50px;
+	width: 142px;
+	display: block;
+	background: url('imagens/dcc.png') no-repeat;
+	background-size: contain;
+	color: transparent;
+}
