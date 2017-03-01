@@ -13,25 +13,33 @@
 	$objDb = new db();
 	$link = $objDb->conecta_mysql();
 	
-	$sql = " SELECT DATE_FORMAT(t.data_inclusao, '%d %b %Y %T') AS data_inclusao_formatada, t.tweet, u.usuario ";
-	$sql.= " FROM tweet AS t JOIN usuarios AS u ON (t.id_usuario = u.id) ";
-	$sql.= " WHERE id_usuario = $id_usuario ";
-	$sql.= " OR id_usuario IN (select seguindo_id_usuario from usuarios_seguidores where id_usuario = $id_usuario) ";
-	$sql.= " ORDER BY data_inclusao DESC ";
+	$sql = " SELECT avg(avaliacao), us.* FROM avaliacao as a LEFT JOIN usuarios_seguidores AS us ON (a.id_usuario = us.seguindo_id_usuario) WHERE id < 20 ";
+	$sql2 = " SELECT u.*, us.* ";
+	$sql2.= " FROM usuarios AS u ";
+	$sql2.= " LEFT JOIN usuarios_seguidores AS us ";
+	$sql2.= " ON (us.id_usuario = $id_usuario AND u.id = us.seguindo_id_usuario) ";
+	$sql2.= " WHERE u.id < 20 and u.id <> $id_usuario";
 
 	$resultado_id = mysqli_query($link, $sql);
+	$resultado_id2 = mysqli_query($link, $sql2);
+	$media_aval = 0;
 
-	if($resultado_id){
+	if($resultado_id && $resultado_id2){
 
-		while($registro = mysqli_fetch_array($resultado_id, MYSQLI_ASSOC)){
+		while($registro = mysqli_fetch_array($resultado_id, MYSQLI_ASSOC) && $registro2 = mysqli_fetch_array($resultado_id2, MYSQLI_ASSOC)){
+			$media_aval = $registro2['media_aval'];
 			echo '<a href="#" class="list-group-item">';
-				echo '<h4 class="list-group-item-heading">'.$registro['usuario'].' <small> - '.$registro['data_inclusao_formatada'].'</small></h4>';
-				echo '<p class="list-group-item-text">'.$registro['tweet'].'</p>';
+				echo '<h4 class="list-group-item-text">'.$registro['usuario'].'</h4>';
+				echo '<strong>'.$registro2['media_aval'].'</strong>';
+				echo '<p class="list-group-item-text pull-right">';
+				echo '<spam> nhaaaaaaaaaa</spam>';
+				echo '</p>';
+				echo '<div class="clearfix"></div>';
 			echo '</a>';
 		}
 
 	} else {
-		echo 'Erro na consulta de tweets no banco de dados!';
+		echo 'Erro na consulta de professores no banco de dados!';
 	}
 
 ?>
